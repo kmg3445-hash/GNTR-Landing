@@ -783,6 +783,29 @@ footer {
 }
 .hero-bg-mobile { display: none; }
 .hero-bg-desktop { display: block; }
+@media (max-width: 560px) {
+  .technique-step.reverse { display: flex; flex-direction: column; }
+  .technique-step.reverse > img { order: 2; }
+  .technique-step.reverse > div { order: 1; }
+}
+@media (max-width: 560px) {
+  .review-track-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    cursor: grab;
+  }
+  .review-track-wrap::before,
+  .review-track-wrap::after { display: none; }
+  .review-track {
+    animation: none !important;
+    width: max-content;
+  }
+  .review-card {
+    scroll-snap-align: start;
+    min-width: 80vw;
+  }
+}
 </style>
 </head>
 <body>
@@ -1130,7 +1153,7 @@ footer {
           봉합이 필요 없으면 <strong>'이 상처는 안 꿰매도 됩니다'라고 솔직하게 말씀드립니다.</strong>
         </div>
       </details>
-      <details><summary>다친 지 2~3일이 지났는데, 지금이라도 꿰맬 수 있나요? <span class="si">+</span></summary>
+      <details><summary>찢어진 지 2-3일 지났습니다. 지금이라도 봉합할 수 있나요? <span class="si">+</span></summary>
         <div class="faq-ans">
           이미 상처 부위에 새살이 차오르기 시작했다면 봉합이 어려울 수 있습니다.<br>
           하지만 상처의 상태에 따라 2일 정도가 지나도 봉합이 가능한 경우가 존재합니다.<br><br>
@@ -1138,7 +1161,7 @@ footer {
           <strong>늦었다고 단정 짓지 마시고, 내원하셔서 정확한 상태를 확인받아 보시길 권해드립니다.</strong>
         </div>
       </details>
-      <details><summary>응급실이나 타병원에서 급하게 꿰맸는데, 재봉합 할 수 있나요? <span class="si">+</span></summary>
+      <details><summary>응급실/타병원에서 꿰맸습니다. 재봉합할 수 있나요? <span class="si">+</span></summary>
         <div class="faq-ans">
           네, 흉터 걱정 때문에 재봉합을 위해 내원하시는 분들이 굉장히 많습니다.<br>
           물론 무조건 실밥을 풀고 다시 꿰매는 것은 아닙니다.<br><br>
@@ -1167,7 +1190,7 @@ footer {
           다만 아이가 극도로 불안해하거나 협조하기 어려운 상황이라면 진정제 복용 후 진행하기도 합니다.
         </div>
       </details>
-      <details><summary>마취나 진정제 복용을 위해 내원 전 금식을 해야 하나요? <span class="si">+</span></summary>
+      <details><summary>내원 전 금식을 해야 하나요? <span class="si">+</span></summary>
         <div class="faq-ans">
           <strong>가능하면 4시간 정도 금식 상태로 내원해 주세요.</strong><br>
           포크랄 진정제를 사용할 수 있기 때문에 구토 가능성을 줄이기 위한 권고입니다.<br><br>
@@ -1280,8 +1303,8 @@ footer {
   <div class="footer-inner">
     <div>
       <div class="footer-logo">강남테라성형외과</div>
-      <div>대표원장 유채규 · 성형외과 전문의 (보건복지부 제 1155호)</div>
-      <div>경기 부천시 원미구 상동로 90 메가플러스 B동 2층 209호 · 032-516-5977</div>
+      <div>원장 유채규 · 성형외과 전문의 (보건복지부 제 1155호)</div>
+      <div>경기 부천시 원미구 상동로 90 메가플러스 B동 2층 209호</div><div>032-516-5977</div>
     </div>
     <div class="footer-disc">
       본 페이지의 내용은 일반적인 의료 정보 제공을 목적으로 하며, 개인의 상태에 따라 진료 결과가 다를 수 있습니다. 정확한 진단과 치료는 반드시 의료진과 직접 상담하시기 바랍니다.
@@ -1315,21 +1338,22 @@ function closeReviewModal() {
 var reviewTrack = document.getElementById('reviewTrack');
 var reviewWrap = document.querySelector('.review-track-wrap');
 
-// 모바일: wrap 전체 터치로 pause 토글 (한 번만 실행)
-var reviewTouchLock = false;
+// 모바일: 슬라이드 스와이프 (PC는 기존 pause 토글 유지)
 if (reviewWrap) {
-  reviewWrap.addEventListener('touchend', function(e) {
-    var isMobile = window.matchMedia('(max-width: 560px)').matches;
-    if (!isMobile) return;
-    if (reviewTouchLock) return;
-    reviewTouchLock = true;
-    setTimeout(function() { reviewTouchLock = false; }, 400);
-    if (reviewTrack.classList.contains('paused')) {
-      reviewTrack.classList.remove('paused');
-    } else {
-      reviewTrack.classList.add('paused');
-    }
-  });
+  var isMobileSlider = window.matchMedia('(max-width: 560px)').matches;
+  if (!isMobileSlider) {
+    var reviewTouchLock = false;
+    reviewWrap.addEventListener('touchend', function(e) {
+      if (reviewTouchLock) return;
+      reviewTouchLock = true;
+      setTimeout(function() { reviewTouchLock = false; }, 400);
+      if (reviewTrack.classList.contains('paused')) {
+        reviewTrack.classList.remove('paused');
+      } else {
+        reviewTrack.classList.add('paused');
+      }
+    });
+  }
 }
 
 // 데스크탑: 카드 클릭시 이미지 확대
